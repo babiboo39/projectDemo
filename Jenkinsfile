@@ -1,7 +1,7 @@
 def build_status = false
 def test_status = false
 def deploy_status = false
-
+def release_status = false
 pipeline {
     agent any
 
@@ -132,15 +132,20 @@ pipeline {
                 script {
                     try {
                         timeout(time: 1, unit: 'DAYS') {
-                            versionName = input (
+                            version_name = input (
                                  id: 'version', message: 'Input version name', parameters: [
                                     [$class: 'TextParameterDefinition', description: 'Whatever you type here will be your version', name: 'Version']
                                 ]
                             )
                         }
-                      echo "the version will be: ${versionName}"
+                        try {
+                            echo "execute command to release service"
+                            release_status = true
+                        } catch (Exception err) {
+                            release_status = false
+                        }
                     } catch (Exception err) {
-                       echo "Send the notification to Slack that the operation has been canceled"
+                       release_status = false
                     }
                 }
             }
