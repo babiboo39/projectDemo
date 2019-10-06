@@ -1,8 +1,30 @@
-def buildStatus = false
-def testStatus = false
+def build_status = false
+def test_status = false
 
 pipeline {
     agent any
+
+    environment {
+        service_name = "${JOB_NAME}".split('/').first()
+        build_tool = sh (
+            script: ''' if [[ -f pom.xml ]]; then
+                            echo 'mvnw'
+                        elif [[ -f build.gradle ]]; then
+                            echo 'gradlew'
+                        fi ''',
+            returnStdout: true
+        ).trim()
+        env_name = sh (
+            script: ''' if [[ ${GIT_BRANCH} == *'feature'* ]] || [[ ${GIT_BRANCH} == *'hotfix'* ]] || [[ ${GIT_BRANCH} == *'bugfix'* ]]; then
+                            echo 'feature'
+                        elif [[ ${GIT_BRANCH} == *'master' ]]; then
+                            echo 'alpha'
+                        else
+                            echo 'build not allowed in this branch'
+                        fi ''',
+            returnStdout: true
+        ).trim()
+    }
     stages {
         stage ('Build & Test') {
             parallel {
@@ -11,9 +33,9 @@ pipeline {
                         script {
                             try {
                                 echo "Build Stage"
-                                buildStatus = true
+                                build_status = true
                             } catch (Exception err) {
-                                buildStatus = false
+                                build_status = false
                             }
                         }
                     }
@@ -23,16 +45,16 @@ pipeline {
                         script {
                             try {
                                 echo "Test Stage"
-                                testStatus = true
+                                test_status = true
                             } catch(Exception err) {
-                                testStatus = false
+                                test_status = false
                             }
                         }
                     }
                 }
             }
         }
-        
+
         stage ('Packaging and Build Image') {
             when {
                 expression {
@@ -107,9 +129,5 @@ pipeline {
                 }
             }
         }
-    }
-    environment {
-        service_name = "${JOB_NAME}".split('/').first()
-        // put yor environment in here
     }
 }
