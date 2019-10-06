@@ -43,10 +43,22 @@ pipeline {
                 stage('Test') {
                     steps {
                         script {
-                            try {
-                                echo "Test Stage"
-                                test_status = true
-                            } catch(Exception err) {
+                            if (env.build_tool == "mvnw") {
+                                try {
+                                    echo "use mvnw"
+                                    test_status = true
+                                } catch (Exception err) {
+                                    test_status = false
+                                }
+                            } else if (env.build_tool == "gradlew") {
+                                try {
+                                    echo "use gradlew"
+                                    test_status = true
+                                } catch (Exception err) {
+                                    test_status = false
+                                }
+                            } else {
+                                echo "Can't specify build tool, exitting...."
                                 test_status = false
                             }
                         }
