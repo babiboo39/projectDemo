@@ -1,5 +1,6 @@
 def build_status = false
 def test_status = false
+def deploy_status = false
 
 pipeline {
     agent any
@@ -91,30 +92,33 @@ pipeline {
             }
         }   
         
-        stage ('Deploy Feature/Alpha') {
+        stage ('Deploy') {
             when {
                 expression {
-                    buildStatus && testStatus
+                    build_status && test_status
                 }
             }
             steps {
                 script {
-                    echo "This stage is underconstruction"
                     try {
-                        echo "Run the command to Deploy feature/alpha"
-                        try {
-                            timeout(time: 1, unit: 'DAYS') {
-                                env.userChoice = input message: 'Do you want to Release?',
-                                parameters: [choice(name: 'Versioning Service', choices: 'no\nyes', description: 'Choose "yes" if you want to release this build')]
+                        echo "Run the command to Deploy"
+                        deploy_status = true
+
+                        if (env.env_name == 'alpha') {
+                            try {
+                                timeout(time: 1, unit: 'DAYS') {
+                                    env.userChoice = input message: 'Do you want to Release?',
+                                    parameters: [choice(name: 'Versioning Service', choices: 'no\nyes', description: 'Choose "yes" if you want to release this build')]
+                                }
+                                if (userChoice == 'no') {
+                                    echo "User refuse to release this build, stopping...."
+                                }
+                            } catch (Exception err) {
+                                deploy_status = false
                             }
-                            if (userChoice == 'no') {
-                                echo "User refuse to release this build, stopping...."
-                            }
-                        } catch (Exception err) {
-                            echo "Send notification to Slack that the operation has been aborted"
                         }
                     } catch (Exception err) {
-                        echo "Will fail and send the report"
+                        deploy_status = false
                     }
                 }
             }
