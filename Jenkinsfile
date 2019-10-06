@@ -5,7 +5,6 @@ def release_status = false
 
 pipeline {
     agent any
-
     environment {
         service_name = "${JOB_NAME}".split('/').first()
         build_tool = sh (
