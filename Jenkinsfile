@@ -2,6 +2,7 @@ def build_status = false
 def test_status = false
 def deploy_status = false
 def release_status = false
+
 pipeline {
     agent any
 
