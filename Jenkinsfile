@@ -67,24 +67,24 @@ pipeline {
             }
         }
 
-        stage ('Packaging and Build Image') {
+        stage ('Packaging and Dockerize Image') {
             when {
                 expression {
-                    buildStatus && testStatus
+                    build_status && test_status
                 }
             }
             parallel {
                 stage('Build and push docker image') {
                     steps {
                         script {
-                            echo "Dockerize Stage"
+                            echo "This stage will Dockerize the services"
                         }
                     }
                 }
-                stage('Packaging Jar to tgz and save to alibaba') {
+                stage('Packaging Jar to and store to alibaba OSS') {
                     steps {
                         script {
-                            echo "Packaging Stage"
+                            echo "This stage will package the services and store to alibaba OSS"
                         }
                     }
                 }
