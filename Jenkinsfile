@@ -32,26 +32,7 @@ pipeline {
                 }
             }
         }
-
-        stage('Send Report') {
-            when {
-                expression {
-                    !buildStatus || !testStatus
-                }
-            }
-            steps {
-                script {
-                    if (buildStatus) {
-                        echo 'Put some action in here...'
-                    } else if (testStatus){
-                        echo 'Put some action in here...'
-                    } else {
-                        echo 'Put some action in here...'
-                    }
-                }
-            }
-        }
-
+        
         stage ('Packaging and Build Image') {
             when {
                 expression {
