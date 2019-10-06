@@ -150,5 +150,30 @@ pipeline {
                 }
             }
         }
+
+        stage ('Notify') {
+            when {
+                expression {
+                    !build_status || !test_status || !deploy_status || !release_status || deploy_status || release_status = false
+                }
+            }
+            steps {
+                script {
+                    if (!build_status) {
+                        echo "will notify the user that the build stage is failed"
+                    } else if (!test_status) {
+                        echo "will notify the user that the test stage is failed"
+                    } else if (!deploy_status) {
+                        echo "will notify the user that the deploy is failed"
+                    } else if (deploy_status) {
+                        echo "will notify the user that deploy is success"
+                    } else if (!release_status) {
+                        echo "will notify the user that release is failed"
+                    } else if (release_status) {
+                        echo "will notify the user that release is success"
+                    }
+                }
+            }
+        }
     }
 }
