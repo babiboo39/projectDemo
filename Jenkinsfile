@@ -4,21 +4,6 @@ def testStatus = false
 pipeline {
     agent any
     stages {
-        stage('Checkout branch') {
-            parallel {
-                stage('Checkout branch') {
-                    steps {
-                        echo 'checkout scm'
-                    }
-                }
-                stage('Prepare ENV') {
-                    steps {
-                        echo 'Environment Setting'
-                    }
-                }
-            }
-        }
-
         stage ('Build & Test') {
             parallel {
                 stage('Build') {
@@ -109,8 +94,6 @@ pipeline {
                             }
                             if (userChoice == 'no') {
                                 echo "User refuse to release this build, stopping...."
-                            } else {
-                                deployStatus = true
                             }
                         } catch (Exception err) {
                             echo "Send notification to Slack that the operation has been aborted"
