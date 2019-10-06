@@ -7,7 +7,7 @@ pipeline {
     agent any
 
     environment {
-        service_name = "${JOB_NAME}".split('/').first()
+        // service_name = "${JOB_NAME}".split('/').first()
         // build_tool = sh (
         //     script: ''' if [[ -f pom.xml ]]; then
         //                     echo 'mvnw'
@@ -155,7 +155,7 @@ pipeline {
         stage ('Notify') {
             when {
                 expression {
-                    !build_status || !test_status || !deploy_status || !release_status || deploy_status || release_status = false
+                    !build_status || !test_status || !deploy_status || !release_status || deploy_status || release_status
                 }
             }
             steps {
