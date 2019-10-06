@@ -8,24 +8,24 @@ pipeline {
 
     environment {
         service_name = "${JOB_NAME}".split('/').first()
-        build_tool = sh (
-            script: ''' if [[ -f pom.xml ]]; then
-                            echo 'mvnw'
-                        elif [[ -f build.gradle ]]; then
-                            echo 'gradlew'
-                        fi ''',
-            returnStdout: true
-        ).trim()
-        env_name = sh (
-            script: ''' if [[ ${GIT_BRANCH} == *'feature'* ]] || [[ ${GIT_BRANCH} == *'hotfix'* ]] || [[ ${GIT_BRANCH} == *'bugfix'* ]]; then
-                            echo 'feature'
-                        elif [[ ${GIT_BRANCH} == *'master' ]]; then
-                            echo 'alpha'
-                        else
-                            echo 'build not allowed in this branch'
-                        fi ''',
-            returnStdout: true
-        ).trim()
+        // build_tool = sh (
+        //     script: ''' if [[ -f pom.xml ]]; then
+        //                     echo 'mvnw'
+        //                 elif [[ -f build.gradle ]]; then
+        //                     echo 'gradlew'
+        //                 fi ''',
+        //     returnStdout: true
+        // ).trim()
+        // env_name = sh (
+        //     script: ''' if [[ ${GIT_BRANCH} == *'feature'* ]] || [[ ${GIT_BRANCH} == *'hotfix'* ]] || [[ ${GIT_BRANCH} == *'bugfix'* ]]; then
+        //                     echo 'feature'
+        //                 elif [[ ${GIT_BRANCH} == *'master' ]]; then
+        //                     echo 'alpha'
+        //                 else
+        //                     echo 'build not allowed in this branch'
+        //                 fi ''',
+        //     returnStdout: true
+        // ).trim()
     }
     stages {
         stage ('Build & Test') {
